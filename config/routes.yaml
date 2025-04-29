@@ -3,3 +3,29 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+app_equipement_index:
+    path: /equipement
+    controller: App\Controller\EquipementController::index
+    methods: GET
+
+app_equipement_new:
+    path: /equipement/new
+    controller: App\Controller\EquipementController::new
+    methods: [GET, POST]
+
+app_equipement_show:
+    path: /equipement/{id}
+    controller: App\Controller\EquipementController::show
+    methods: GET
+
+app_equipement_edit:
+    path: /equipement/{id}/edit
+    controller: App\Controller\EquipementController::edit
+    methods: [GET, POST]
+
+app_equipement_delete:
+    path: /equipement/{id}
+    controller: App\Controller\EquipementController::delete
+    methods: POST
+

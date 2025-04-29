@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de l'équipement{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Détails de l'équipement</h1>
+
+        <p><strong>Nom:</strong> {{ equipement.nom }}</p>
+        <p><strong>Description:</strong> {{ equipement.description }}</p>
+        <p><strong>État:</strong> {{ equipement.etat }}</p>
+
+        <a href="{{ path('app_equipement_edit', {'id': equipement.id}) }}" class="btn btn-secondary">Modifier</a>
+        <a href="{{ path('app_equipement_index') }}" class="btn btn-secondary">Retour</a>
+    </div>
+{% endblock %}

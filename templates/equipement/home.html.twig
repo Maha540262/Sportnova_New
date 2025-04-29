@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Sportnova{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="text-center">
+            <h1 class="display-4 mb-4">
+                <i class="bi bi-trophy-fill text-white"></i> Bienvenue sur Sportnova
+            </h1>
+            <p class="lead">Votre gestion des équipements sportifs.</p>
+
+            <a href="{{ path('app_equipement_index') }}" class="btn btn-lg btn-success mt-4">
+                <i class="bi bi-person-arms-up"></i>Équipement
+            </a>
+        </div>
+    </div>
+{% endblock %}
