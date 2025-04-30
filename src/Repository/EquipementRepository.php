@@ -15,6 +15,14 @@ class EquipementRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Equipement::class);
     }
+    public function findOneBySlug(string $slug): ?Equipement
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.slug = :slug')
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 
     //    /**
     //     * @return Equipement[] Returns an array of Equipement objects

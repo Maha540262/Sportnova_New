@@ -26,6 +26,11 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+#            Gedmo:
+#                type: annotation
+#                prefix: Gedmo\Mapping\Annotation
+#                dir: '%kernel.project_dir%/vendor/gedmo/doctrine-extensions/lib/Gedmo/Mapping/Annotation'
+#                is_bundle: false
         controller_resolver:
             auto_mapping: false
 

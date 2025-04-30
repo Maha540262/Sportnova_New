@@ -3,11 +3,50 @@
 {% block title %}Sportnova - Équipements{% endblock %}
 
 {% block stylesheets %}
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+.pagination {
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.pagination li > a,
+.pagination li > span {
+    color: #212529;
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+    margin: 0 2px;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+    background-color: #fff;
+}
+
+.pagination li.active > span {
+    background-color: #ff6600;
+    color: white;
+    border-color: #ff6600;
+    font-weight: bold;
+}
+
+.pagination li > a:hover {
+    background-color: #ffe1cc;
+    color: #ff6600;
+    border-color: #ff6600;
+}
+
+.pagination li.disabled > span {
+    color: #aaa;
+    background-color: #f8f9fa;
+}
+</style>
 {% endblock %}
 
 {% block body %}
+
+
     <div class="container mt-5">
         <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white rounded shadow-sm">
             <h2 class="mb-0"><i class="bi bi-trophy"></i> Liste des Équipements</h2>
@@ -15,83 +54,157 @@
                 <i class="bi bi-plus-circle"></i> Nouvel Équipement
             </a>
         </div>
-
+<a class="btn btn-outline-dark mb-3" data-bs-toggle="modal" data-bs-target="#galleryModal">
+    <i class="bi bi-images"></i> Voir les images des équipements
+</a>
         {% if app.session.flashbag.has('success') %}
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ app.session.flashbag.get('success')[0] }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         {% endif %}
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <input type="text" name="search" value="{{ search }}" class="form-control" placeholder="Rechercher par nom ou description...">
+    </div>
+    <div class="col-md-3">
+        <select name="etat" class="form-select">
+            <option value="">-- Filtrer par état --</option>
+            <option value="neuf" {{ etat == 'neuf' ? 'selected' : '' }}>Neuf</option>
+            <option value="bon état" {{ etat == 'bon état' ? 'selected' : '' }}>Bon état</option>
+            <option value="usé" {{ etat == 'usé' ? 'selected' : '' }}>Usé</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="disponible" class="form-select">
+            <option value="">-- Disponibilité --</option>
+            <option value="1" {{ disponible == '1' ? 'selected' : '' }}>Disponible</option>
+            <option value="0" {{ disponible == '0' ? 'selected' : '' }}>Indisponible</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">
+            <i class="bi bi-search"></i> Filtrer
+        </button>
+    </div>
+</form>
 
         <div class="card shadow-sm">
+
             <div class="card-body p-0">
+
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>ID</th>
-                                <th>Nom</th>
-                                <th>Description</th>
-                                <th>État</th>
-                                <th>Actions</th>
-                                <th>Disponible</th>
-<th>Image</th>
+                       <thead class="table-light">
+                           <tr>
+                               <th>Nom</th>
+                               <th>Description</th>
+                               <th>État</th>
+                               <th>Créé le</th>
+                               <th>Modifié le</th>
+                               <th>Disponible</th>
+                               <th>Image</th>
+                               <th>Actions</th>
+                           </tr>
+                       </thead>
+                       <tbody>
+                           {% for equipement in equipements %}
+                               <tr>
+                                   <td>
+                                       <a href="{{ path('app_equipement_show', {'slug': equipement.slug}) }}" style="text-decoration: none; color: inherit;">
+                                           <strong>{{ equipement.nom }}</strong>
+                                       </a>
+                                   </td>
+                                   <td>{{ equipement.description }}</td>
+                                   <td>
+                                       <span class="badge rounded-pill bg-{{ equipement.etat|status_color }}">
+                                           {{ equipement.etat|status_format }}
+                                       </span>
+                                   </td>
+                                   <td>{{ equipement.createdAt ? equipement.createdAt|date('d/m/Y H:i') : '—' }}</td>
+                                   <td>{{ equipement.updatedAt ? equipement.updatedAt|date('d/m/Y H:i') : '—' }}</td>
+                                   <td>
+                                       {% if equipement.disponible %}
+                                           <span class="badge bg-success">Oui</span>
+                                       {% else %}
+                                           <span class="badge bg-danger">Non</span>
+                                       {% endif %}
+                                   </td>
+                                   <td>
+                                       {% if equipement.imageUrl %}
+                                           <img src="{{ equipement.imageUrl }}" alt="Image" style="max-height: 50px;">
+                                       {% else %}
+                                           <span class="text-muted">Pas d'image</span>
+                                       {% endif %}
+                                   </td>
+                                   <td>
+                                       <a class="btn btn-sm btn-outline-primary me-1" href="{{ path('app_equipement_edit', {'slug': equipement.slug}) }}">
+                                           <i class="bi bi-pencil"></i>
+                                       </a>
+                                       <form method="POST" action="{{ path('app_equipement_delete', {'slug': equipement.slug}) }}" style="display:inline;">
+                                           <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ equipement.slug) }}">
+                                           <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet équipement ?');">
+                                               <i class="bi bi-trash"></i>
+                                           </button>
+                                       </form>
+                                   </td>
+                               </tr>
+                           {% else %}
+                               <tr>
+                                   <td colspan="8" class="text-center py-4">Aucun équipement trouvé.</td>
+                               </tr>
+                           {% endfor %}
+                       </tbody>
 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for equipement in equipements %}
-                                <tr>
-                                    <td>{{ equipement.id }}</td>
-                                    <td><strong>{{ equipement.nom }}</strong></td>
-                                    <td>{{ equipement.description }}</td>
-                                    <td>
-                                        <span class="badge rounded-pill bg-{{ equipement.etat|status_color }}">
-                                            {{ equipement.etat|status_format }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <a class="btn btn-sm btn-outline-primary me-1" href="{{ path('app_equipement_edit', {'id': equipement.id}) }}"><i class="bi bi-pencil"></i></a>
-                                        <!-- Delete Button -->
-                                        <form method="POST" action="{{ path('app_equipement_delete', {'id': equipement.id}) }}" style="display:inline;">
-                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ equipement.id) }}">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr supprimer cet équipement ?');">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                    <td>
-    {% if equipement.disponible %}
-        <span class="badge bg-success">Oui</span>
-    {% else %}
-        <span class="badge bg-danger">Non</span>
-    {% endif %}
-</td>
-
-<td>
-    {% if equipement.imageUrl %}
-        <img src="{{ equipement.imageUrl }}" alt="Image" style="max-height: 50px;">
-    {% else %}
-        <span class="text-muted">Pas d'image</span>
-    {% endif %}
-</td>
-
-                                </tr>
-                            {% else %}
-                                <tr>
-                                    <td colspan="5" class="text-center py-4">Aucun équipement</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
                     </table>
+               <div class="pagination mt-4">
+                   {{ knp_pagination_render(equipements) }}
+               </div>
+
+
                 </div>
             </div>
         </div>
     </div>
+<!-- Modal Bootstrap -->
+<div class="modal fade" id="galleryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Galerie des équipements</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div id="equipementCarousel" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            {% for equipement in equipements %}
+              {% if equipement.imageUrl %}
+                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                  <a href="{{ path('app_equipement_show', {'slug': equipement.slug}) }}">
+                    <img src="{{ equipement.imageUrl }}" loading="lazy" class="d-block w-100" style="max-height: 600px; object-fit: contain;" alt="{{ equipement.nom }}">
+                  </a>
+                  <div class="carousel-caption d-none d-md-block">
+                    <h5>{{ equipement.nom }}</h5>
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#equipementCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#equipementCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block javascripts %}
-    <script>
-        // Optional: You can add any JavaScript you need here
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

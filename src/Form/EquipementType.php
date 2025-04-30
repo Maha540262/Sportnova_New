@@ -24,7 +24,7 @@ class EquipementType extends AbstractType
                         'message' => 'Le nom de l\'équipement est requis.',
                     ]),
                     new Assert\Length([
-                        'max' => 100,
+                        'max' => 30,
                         'maxMessage' => 'Le nom ne peut pas dépasser {{ limit }} caractères.',
                     ])
                 ],
@@ -35,7 +35,7 @@ class EquipementType extends AbstractType
                         'message' => 'La description est requise.',
                     ]),
                     new Assert\Length([
-                        'max' => 20,
+                        'max' => 100,
                         'maxMessage' => 'La description ne peut pas dépasser {{ limit }} caractères.',
                     ])
                 ],

@@ -9,8 +9,24 @@
         <p><strong>Nom:</strong> {{ equipement.nom }}</p>
         <p><strong>Description:</strong> {{ equipement.description }}</p>
         <p><strong>État:</strong> {{ equipement.etat }}</p>
+        <p><strong>Disponible:</strong>
+            {% if equipement.disponible %}
+                <span class="badge bg-success">Oui</span>
+            {% else %}
+                <span class="badge bg-danger">Non</span>
+            {% endif %}
+        </p>
+        <p><strong>Créé le:</strong> {{ equipement.createdAt ? equipement.createdAt|date('d/m/Y H:i') : '—' }}</p>
+        <p><strong>Modifié le:</strong> {{ equipement.updatedAt ? equipement.updatedAt|date('d/m/Y H:i') : '—' }}</p>
+        <p><strong>Image:</strong><br>
+            {% if equipement.imageUrl %}
+                <img src="{{ equipement.imageUrl }}" alt="Image" style="max-height: 200px;">
+            {% else %}
+                <span class="text-muted">Aucune image</span>
+            {% endif %}
+        </p>
 
-        <a href="{{ path('app_equipement_edit', {'id': equipement.id}) }}" class="btn btn-secondary">Modifier</a>
+        <a href="{{ path('app_equipement_edit', {'slug': equipement.slug}) }}" class="btn btn-secondary">Modifier</a>
         <a href="{{ path('app_equipement_index') }}" class="btn btn-secondary">Retour</a>
     </div>
 {% endblock %}

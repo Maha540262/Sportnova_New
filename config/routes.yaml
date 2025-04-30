@@ -15,17 +15,17 @@ app_equipement_new:
     methods: [GET, POST]
 
 app_equipement_show:
-    path: /equipement/{id}
+    path: /equipement/{slug}
     controller: App\Controller\EquipementController::show
     methods: GET
 
 app_equipement_edit:
-    path: /equipement/{id}/edit
+    path: /equipement/{slug}/edit
     controller: App\Controller\EquipementController::edit
     methods: [GET, POST]
 
 app_equipement_delete:
-    path: /equipement/{id}
+    path: /equipement/{slug}
     controller: App\Controller\EquipementController::delete
     methods: POST
 
